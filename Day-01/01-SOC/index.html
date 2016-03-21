@@ -22,17 +22,33 @@
 			return parseInt(this,10);
 		};
 
+		//State and behavior
+		function SalaryCalculator(){
+			this.basic = 0;
+			this.hra = 0;
+			this.da = 0;
+			this.tax = 0;
+			this.salary = 0;
+		}
+		SalaryCalculator.prototype.calculate = function(){
+			var gross = this.basic + this.hra + this.da;
+			var net = gross * ((100-this.tax)/100);
+			this.salary = net;
+		};
+
+
+
 		$(document).ready(function(){
+			var calculator = new SalaryCalculator();
 			$("#btnCalculate").click(function(){
-				var basic = $("#txtBasic").val().toInt();
-				var hra = $("#txtHra").val().toInt();
-				var da = $("#txtDa").val().toInt();
-				var tax = $("#rangeTax").val().toInt();
+				calculator.basic = $("#txtBasic").val().toInt();
+				calculator.hra = $("#txtHra").val().toInt();
+				calculator.da = $("#txtDa").val().toInt();
+				calculator.tax = $("#rangeTax").val().toInt();
 
-				var gross = basic + hra + da;
-				var net = gross * ((100-tax)/100);
+				calculator.calculate();
 
-				$("#divResult").html(net);
+				$("#divResult").html(calculator.salary);
 			});
 			$("#rangeTax").change(function(){
 				$("#spanTax").html(this.value);
