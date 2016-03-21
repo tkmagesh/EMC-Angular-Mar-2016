@@ -38,22 +38,24 @@
 				if (_data[attrName] === value) return;
 				_data[attrName] = value;
 				//trigger change notifiation for attrName
-				if (typeof _eventHandlers[attrName] === 'function'){
-					var eventHandlerFn = _eventHandlers[attrName];
-					eventHandlerFn();
-				}
+				
+				var eventHandlerFns = _eventHandlers[attrName];
+				for(var i=0; i<eventHandlerFns.length; i++)
+					if (typeof eventHandlerFns[i] === 'function')
+						eventHandlerFns[i]();
+				
 			};
 
 			var _eventHandlers = {
-				basic : null,
-				hra : null,
-				da : null,
-				tax : null,
-				salary : null
+				basic : [],
+				hra : [],
+				da : [],
+				tax : [],
+				salary : []
 			};
 
 			this.onChange = function(attrName, eventHandlerFn){
-				_eventHandlers[attrName] = eventHandlerFn;
+				_eventHandlers[attrName].push(eventHandlerFn);
 			}
 		}
 		SalaryCalculator.prototype.calculate = function(){
@@ -101,6 +103,8 @@
 			});
 			calculator.onChange('tax', function(){
 				$("#rangeTax").val(calculator.get('tax'));
+			});
+			calculator.onChange('tax', function(){
 				$("#spanTax").html(calculator.get('tax'));
 			});
 		});
