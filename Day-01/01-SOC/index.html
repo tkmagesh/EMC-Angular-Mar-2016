@@ -16,10 +16,28 @@
 			font-weight: bold;
 		}
 	</style>
+	<script src="jquery-1.12.2.js"></script>
 	<script>
-	/* 
-		basic, hra, da, tax(%)
-	*/
+		Object.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		$(document).ready(function(){
+			$("#btnCalculate").click(function(){
+				var basic = $("#txtBasic").val().toInt();
+				var hra = $("#txtHra").val().toInt();
+				var da = $("#txtDa").val().toInt();
+				var tax = $("#rangeTax").val().toInt();
+
+				var gross = basic + hra + da;
+				var net = gross * ((100-tax)/100);
+
+				$("#divResult").html(net);
+			});
+			$("#rangeTax").change(function(){
+				$("#spanTax").html(this.value);
+			});
+		});
 	</script>
 </head>
 <body>
