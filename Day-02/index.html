@@ -86,43 +86,60 @@
 				}
 			}
 		});
+		bugTrackerApp.constant("defaultStorageOption", "sessionStorage")
 
-		bugTrackerApp.factory("bugStorage", function(bugOperations, $window){
-			var storage = $window.localStorage;
-			var maxBugId = 0;
+		bugTrackerApp.config(function(bugStorageProvider, defaultStorageOption){
+			console.log('in config - storage option -> ', defaultStorageOption);
+			//bugStorageProvider.setStorageOption('localStorage');
+		});
 
-			function getAllBugs(){
-				var result = [];
-				for(var i=0; i<storage.length; i++){
-					var data = storage.getItem(storage.key(i));
-					var bug = angular.fromJson(data);
-					maxBugId = maxBugId > bug.id ? maxBugId : bug.id;
-					result.push(bug);
+		bugTrackerApp.provider("bugStorage", function(defaultStorageOption){
+			var _storageOption = defaultStorageOption;
+			
+			var storageFactory = function(bugOperations, $window){
+				var storage = $window[_storageOption];
+				var maxBugId = 0;
+
+				function getAllBugs(){
+					var result = [];
+					for(var i=0; i<storage.length; i++){
+						var data = storage.getItem(storage.key(i));
+						var bug = angular.fromJson(data);
+						maxBugId = maxBugId > bug.id ? maxBugId : bug.id;
+						result.push(bug);
+					}
+					return result;
 				}
-				return result;
-			}
 
-			function addNewBug(newBugName){
-				var newBug = bugOperations.create(++maxBugId, newBugName);
-				saveBug(newBug);
-				return newBug;
-			}
-			function saveBug(bug){
-				storage.setItem(bug.id, angular.toJson(bug));
-			}
-			function toggleBug(bug){
-				bugOperations.toggle(bug);
-				saveBug(bug);
-			}
-			function removeBug(bug){
-				storage.removeItem(bug.id);
-			}
-			return {
-				getAll : getAllBugs,
-				addNew : addNewBug,
-				toggle : toggleBug,
-				remove : removeBug
+				function addNewBug(newBugName){
+					var newBug = bugOperations.create(++maxBugId, newBugName);
+					saveBug(newBug);
+					return newBug;
+				}
+				function saveBug(bug){
+					storage.setItem(bug.id, angular.toJson(bug));
+				}
+				function toggleBug(bug){
+					bugOperations.toggle(bug);
+					saveBug(bug);
+				}
+				function removeBug(bug){
+					storage.removeItem(bug.id);
+				}
+				return {
+					getAll : getAllBugs,
+					addNew : addNewBug,
+					toggle : toggleBug,
+					remove : removeBug
+				};
 			};
+
+			return {
+				setStorageOption : function(option){
+					_storageOption = option;
+				},
+				$get : storageFactory
+			}
 		})
 
 		bugTrackerApp.controller("bugsController", function($scope, bugStorage){

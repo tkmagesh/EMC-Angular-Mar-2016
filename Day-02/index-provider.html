@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Provider - Demo</title>
+	<script src="angular.min.js"></script>
+	<script>
+		var myApp = angular.module("myApp", []);
+
+		myApp.run(function(test, myFactory){
+			console.log("app initialized");
+			console.log('test -> ', test);
+			console.log('myFactory -> ', myFactory);
+		});
+
+		myApp.config(function(testProvider, myFactoryProvider){
+			console.log("app configured");
+			console.log('testProvider -> ', testProvider);
+			console.log('myFactoryProvider -> ', myFactoryProvider);
+			testProvider.setName('suresh');
+		});
+
+		myApp.provider("test", function(){
+			var _name = 'Magesh';
+			return {
+				setName : function(value){
+					_name = value;
+				},
+				$get : function(){
+						return {
+							name : _name
+						};
+					}
+			}
+		});
+
+		myApp.factory("myFactory", function(){
+			return {
+				date : new Date()
+			};
+		})
+	</script>
+</head>
+<body ng-app="myApp">
+	
+</body>
+</html>
