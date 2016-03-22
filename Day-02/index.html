@@ -75,6 +75,7 @@
 			$scope.addNew = function(newBugName){
 				var newBug = bugOperations.create(newBugName);
 				$scope.bugs.push(newBug);
+				$scope.newBug = '';
 			};
 			$scope.toggleBug = function(bug){
 				bugOperations.toggle(bug);
@@ -115,7 +116,7 @@
 				return bugs.reduce(function(result, bug){
 					return bug.isClosed ? ++result: result;
 				},0);
-			};
+			};	
 		});
 	</script>
 </head>
