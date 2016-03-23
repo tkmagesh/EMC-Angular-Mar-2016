@@ -42,10 +42,17 @@ var program = (function(){
 		return promise;
 	}
 
+	function addAsyncPromiseClient(x,y){
+		console.log("[Consumer] - triggering addAsyncPromise");
+		var promise = addAsyncPromise(100,200);
+		promise.then(function(result){
+  			console.log("[Consumer] - result= ", result);
+		})
+	}
 
 	return {
 		addSyncClient : addSyncClient,
 		addAsyncCallbackClient : addAsyncCallbackClient,
-		addAsyncPromise : addAsyncPromise
+		addAsyncPromiseClient : addAsyncPromiseClient
 	};
 })();
