@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Routing Demo</title>
+	<script src="angular.js"></script>
+	<script src="angular-route.js"></script>
+	<script>
+		var myApp = angular.module("myApp", ["ngRoute"]);
+		myApp.config(function($routeProvider){
+			$routeProvider
+				.when("/products", {
+					/*template : '<h3>Products</h3>'*/
+					templateUrl : 'templates/productsTemplate.html',
+					controller : 'productsController'
+				})
+				.when("/products/:id", {
+					templateUrl : 'templates/productInfoTemplate.html',
+					controller : 'productInfoController'
+				})
+				.when("/customers", {
+					/*template : '<h3>Customers</h3>'*/
+					templateUrl : 'templates/customersTemplate.html'
+				})
+				.otherwise({
+					redirectTo : "/products"
+				});
+		});
+
+		myApp.service("productService", function(){
+			this.getAll = function getAllProducts(){
+				return [
+					{id : 1, name : "Pen", cost : 5, units : 100, desc : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi animi est beatae, facilis ducimus atque incidunt. Quod qui iusto labore, voluptatem eveniet, quidem dolore illo voluptas corporis ut ab praesentium.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati delectus commodi ullam voluptas ipsum reiciendis nam qui sapiente, provident et nesciunt officiis asperiores vero laudantium perspiciatis rerum distinctio dolore aliquam.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil laborum aperiam quis, assumenda saepe corporis incidunt, iste ipsum quos. Voluptate excepturi doloremque dolorem earum delectus quae illum ut, ducimus rerum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, repellat, nemo? At ipsum dicta, dolore qui deleniti non maiores modi nostrum aspernatur optio fugit eligendi eius magnam, quos quaerat voluptas."},
+					{id : 2, name : "Hen", cost : 100, units : 20, desc : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi animi est beatae, facilis ducimus atque incidunt. Quod qui iusto labore, voluptatem eveniet, quidem dolore illo voluptas corporis ut ab praesentium.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati delectus commodi ullam voluptas ipsum reiciendis nam qui sapiente, provident et nesciunt officiis asperiores vero laudantium perspiciatis rerum distinctio dolore aliquam.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil laborum aperiam quis, assumenda saepe corporis incidunt, iste ipsum quos. Voluptate excepturi doloremque dolorem earum delectus quae illum ut, ducimus rerum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, repellat, nemo? At ipsum dicta, dolore qui deleniti non maiores modi nostrum aspernatur optio fugit eligendi eius magnam, quos quaerat voluptas."},
+					{id : 3, name : "Den", cost : 250, units : 10, desc : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi animi est beatae, facilis ducimus atque incidunt. Quod qui iusto labore, voluptatem eveniet, quidem dolore illo voluptas corporis ut ab praesentium.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati delectus commodi ullam voluptas ipsum reiciendis nam qui sapiente, provident et nesciunt officiis asperiores vero laudantium perspiciatis rerum distinctio dolore aliquam.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil laborum aperiam quis, assumenda saepe corporis incidunt, iste ipsum quos. Voluptate excepturi doloremque dolorem earum delectus quae illum ut, ducimus rerum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, repellat, nemo? At ipsum dicta, dolore qui deleniti non maiores modi nostrum aspernatur optio fugit eligendi eius magnam, quos quaerat voluptas."},
+					{id : 4, name : "Ten", cost : 10, units : 10, desc : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi animi est beatae, facilis ducimus atque incidunt. Quod qui iusto labore, voluptatem eveniet, quidem dolore illo voluptas corporis ut ab praesentium.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati delectus commodi ullam voluptas ipsum reiciendis nam qui sapiente, provident et nesciunt officiis asperiores vero laudantium perspiciatis rerum distinctio dolore aliquam.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil laborum aperiam quis, assumenda saepe corporis incidunt, iste ipsum quos. Voluptate excepturi doloremque dolorem earum delectus quae illum ut, ducimus rerum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, repellat, nemo? At ipsum dicta, dolore qui deleniti non maiores modi nostrum aspernatur optio fugit eligendi eius magnam, quos quaerat voluptas."},
+					{id : 5, name : "Zen", cost : 100000, units : 1, desc : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi animi est beatae, facilis ducimus atque incidunt. Quod qui iusto labore, voluptatem eveniet, quidem dolore illo voluptas corporis ut ab praesentium.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati delectus commodi ullam voluptas ipsum reiciendis nam qui sapiente, provident et nesciunt officiis asperiores vero laudantium perspiciatis rerum distinctio dolore aliquam.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil laborum aperiam quis, assumenda saepe corporis incidunt, iste ipsum quos. Voluptate excepturi doloremque dolorem earum delectus quae illum ut, ducimus rerum?Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, repellat, nemo? At ipsum dicta, dolore qui deleniti non maiores modi nostrum aspernatur optio fugit eligendi eius magnam, quos quaerat voluptas."}
+				]
+			};
+			this.getById = function(id){
+				return this.getAll().filter(function(product){
+					return product.id === id;
+				})[0];
+			};
+		});
+		
+		myApp.controller("productsController", function($scope, productService){
+			$scope.products = productService.getAll();
+		});
+
+		myApp.controller('productInfoController', function($scope, productService, $routeParams){
+			$scope.product = productService.getById(parseInt($routeParams.id),10);
+		});
+		
+	</script>
+</head>
+<body ng-app="myApp">
+	<h1>Flopkart</h1>
+	<header>
+		<span><a href="#/products">Products</a></span>
+		<span><a href="#/customers">Customers</a></span>
+	</header>
+	<hr>
+	<div class="content" ng-view>
+		
+	</div>
+</body>
+</html>
