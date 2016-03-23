@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Directives - Intro</title>
+	<script src="jquery-1.12.2.js"></script>
+	<script src="angular.min.js"></script>
+	<script>
+		var myApp = angular.module('myApp', []);
+		myApp.controller('testController', function($scope){
+			$scope.setName = function(){
+				$scope.fullName = $scope.firstName + ' ' + $scope.lastName
+			};
+
+			$scope.clear = function(){
+				$scope.firstName = $scope.lastName = $scope.fullName = '';
+			};
+		});
+		myApp.directive("helloWorld", function($compile){
+			var messageTemplate = '<div>Hi {{name}}, Have a nice day!</div>'
+			return {
+				template : '<div></div>',
+				restrict : 'E',
+				scope : {
+					name : '@',
+					onMessageClick : '&'
+				},
+				link : function($scope, $element, $attr){
+					$element.click(function(){
+						console.log('clicked');
+						$scope.$apply(function(){
+							$scope.onMessageClick();
+						});
+					});
+					$scope.$watch("name", function(newValue, oldValue){
+						if (newValue){
+							$element.append($compile(messageTemplate)($scope));
+							//$scope.firstName = '';
+						}
+					});
+				}
+			}
+		});
+	</script>
+</head>
+<body ng-app="myApp">
+	<div ng-controller="testController">
+		<label for="">First Name :</label>
+		<input type="text" name="" id="" ng-model="firstName">
+		<label for="">Last Name :</label>
+		<input type="text" name="" id="" ng-model="lastName">
+		<input type="button" value="Set Name" ng-click="setName()">
+		
+		<hello-world name={{fullName}} on-message-click="clear()"></hello-world>
+	</div>
+	
+</body>
+</html>
