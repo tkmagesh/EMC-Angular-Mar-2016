@@ -49,9 +49,9 @@
 		});
 
 		myApp.controller('productInfoController', function($scope, productService, $routeParams){
-			$scope.product = productService.getById(parseInt($routeParams.id),10);
+			$scope.product = productService.getById(parseInt($routeParams.id,10));
 		});
-		
+
 	</script>
 </head>
 <body ng-app="myApp">

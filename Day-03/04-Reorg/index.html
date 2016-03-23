@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Routing Demo</title>
+	<script src="lib/angular.js"></script>
+	<script src="lib/angular-route.js"></script>
+	<script src="app.js"></script>
+	<script src="products/products.js"></script>
+	<script src="products/productService.js"></script>
+	<script src="products/productsController.js"></script>
+	<script src="products/productInfoController.js"></script>
+	<script src="customers/customers.js"></script>
+</head>
+<body ng-app="myApp">
+	<h1>Flopkart</h1>
+	<header>
+		<span><a href="#/products">Products</a></span>
+		<span><a href="#/customers">Customers</a></span>
+	</header>
+	<hr>
+	<div class="content" ng-view>
+		
+	</div>
+</body>
+</html>
