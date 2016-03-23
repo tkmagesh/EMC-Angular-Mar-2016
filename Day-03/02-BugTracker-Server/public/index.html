@@ -86,77 +86,23 @@
 				}
 			}
 		});
-		bugTrackerApp.constant("defaultStorageOption", "sessionStorage")
+		
+	
 
-		bugTrackerApp.config(function(bugStorageProvider, defaultStorageOption){
-			console.log('in config - storage option -> ', defaultStorageOption);
-			//bugStorageProvider.setStorageOption('localStorage');
-		});
-
-		bugTrackerApp.provider("bugStorage", function(defaultStorageOption){
-			var _storageOption = defaultStorageOption;
-			
-			var storageFactory = function(bugOperations, $window){
-				var storage = $window[_storageOption];
-				var maxBugId = 0;
-
-				function getAllBugs(){
-					var result = [];
-					for(var i=0; i<storage.length; i++){
-						var data = storage.getItem(storage.key(i));
-						var bug = angular.fromJson(data);
-						maxBugId = maxBugId > bug.id ? maxBugId : bug.id;
-						result.push(bug);
-					}
-					return result;
-				}
-
-				function addNewBug(newBugName){
-					var newBug = bugOperations.create(++maxBugId, newBugName);
-					saveBug(newBug);
-					return newBug;
-				}
-				function saveBug(bug){
-					storage.setItem(bug.id, angular.toJson(bug));
-				}
-				function toggleBug(bug){
-					bugOperations.toggle(bug);
-					saveBug(bug);
-				}
-				function removeBug(bug){
-					storage.removeItem(bug.id);
-				}
-				return {
-					getAll : getAllBugs,
-					addNew : addNewBug,
-					toggle : toggleBug,
-					remove : removeBug
-				};
-			};
-
-			return {
-				setStorageOption : function(option){
-					_storageOption = option;
-				},
-				$get : storageFactory
-			}
-		})
-
-		bugTrackerApp.controller("bugsController", function($scope, bugStorage){
-			$scope.bugs = bugStorage.getAll();
+		bugTrackerApp.controller("bugsController", function($scope, bugOperations){
+			$scope.bugs = [];
 
 			$scope.addNew = function(newBugName){
-				var newBug = bugStorage.addNew(newBugName);
+				var newBug = bugOperations.create(0, newBugName);
 				$scope.bugs.push(newBug);
 				$scope.newBug = '';
 			};
 			$scope.toggleBug = function(bug){
-				bugStorage.toggle(bug);
+				bugOperations.toggle(bug);
 			};
 			$scope.removeClosed = function(){
 				for(var i=$scope.bugs.length-1; i>=0; i--)
 					if ($scope.bugs[i].isClosed){
-						bugStorage.remove($scope.bugs[i]);
 						$scope.bugs.splice(i,1);
 					}
 			};
@@ -165,19 +111,7 @@
 		
 
 		bugTrackerApp.filter("closedCount", function($filter){
-			/*return function(bugs){
-				var closedCount = 0;
-				for(var i=0; i<bugs.length; i++)
-					if (bugs[i].isClosed)
-						++closedCount;
-				return closedCount;
-			}*/
-
-			/*var builtInFilter = $filter('filter');
-			return function(bugs){
-				return builtInFilter(bugs, {isClosed : true}).length;
-			};*/
-
+			
 			return function(bugs){
 				return bugs.reduce(function(result, bug){
 					return bug.isClosed ? ++result: result;
@@ -193,7 +127,6 @@
 	<hr>
 	<div class="content" ng-controller="bugsController">
 		<section class="stats">
-			<!-- <span class="closed">{{ (bugs | filter:{isClosed : true}).length }}</span> -->
 			<span class="closed">{{bugs | closedCount}}</span>
 			<span> / </span>
 			<span>{{bugs.length}}</span>
